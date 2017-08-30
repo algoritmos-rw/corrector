@@ -65,12 +65,6 @@ CLIENT_SECRET = os.environ.get("CORRECTOR_OAUTH_SECRET")
 # se envía.
 OAUTH_REFRESH_TOKEN = os.environ.get("CORRECTOR_REFRESH_TOKEN")
 
-# Nunca respondemos a mail enviado por estas direcciones.
-IGNORE_ADDRESSES = {
-    GMAIL_ACCOUNT,                   # Mail de nosotros mismos.
-    "no-reply@accounts.google.com",  # Notificaciones sobre la contraseña.
-}
-
 
 class ErrorInterno(Exception):
   """Excepción para cualquier error interno en el programa.
@@ -103,7 +97,8 @@ def procesar_entrega(msg):
   """
   _, addr_from = email.utils.parseaddr(msg["From"])
 
-  if addr_from in IGNORE_ADDRESSES:
+  # Ignoramos los mails que no son para el corrector automático.
+  if GMAIL_ACCOUNT not in msg["To"]:
     sys.stderr.write("Ignorando email de {}\n".format(addr_from))
     return
 
@@ -338,14 +333,9 @@ def send_reply(orig_msg, reply_text):
   reply.set_payload(reply_text, "utf-8")
 
   reply["From"] = GMAIL_ACCOUNT
-  reply["To"] = orig_msg["From"]
-  reply["Cc"] = orig_msg.get("Cc", "")
+  reply["To"] = orig_msg.get("Cc", "")
   reply["Subject"] = "Re: " + orig_msg["Subject"]
   reply["In-Reply-To"] = orig_msg["Message-ID"]
-
-  # Poniendo en copia a la cuenta del corrector se consigue que sus respuestas
-  # pasen de nuevo los filtros de Gmail y se reenvíen al ayudante apropiado.
-  reply["Bcc"] = GMAIL_ACCOUNT
 
   creds = get_oauth_credentials()
   xoauth2_tok = "user=%s\1" "auth=Bearer %s\1\1" % (GMAIL_ACCOUNT,
