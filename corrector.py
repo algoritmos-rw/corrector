@@ -119,9 +119,14 @@ def procesar_entrega(msg):
 
   # Añadir al archivo TAR la base del TP (skel_dir).
   for path, _, filenames in os.walk(skel_dir):
+
+    # Registra en skel_files los directorios de skel.
+    relpath = os.path.relpath(path, skel_dir)
+    skel_files.add(relpath)
+
     for fname in filenames:
       full_path = os.path.join(path, fname)
-      arch_path = os.path.relpath(full_path, skel_dir)
+      arch_path = os.path.join(relpath, fname)
       skel_files.add(arch_path)
       tar.add(full_path, arch_path)
 
