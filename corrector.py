@@ -126,7 +126,7 @@ def procesar_entrega(msg):
 
     for fname in filenames:
       full_path = os.path.join(path, fname)
-      arch_path = os.path.join(relpath, fname)
+      arch_path = os.path.relpath(full_path, skel_dir)
       skel_files.add(arch_path)
       tar.add(full_path, arch_path)
 
