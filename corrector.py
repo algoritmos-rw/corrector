@@ -344,9 +344,10 @@ def zip_datetime(info):
 
 def make_pdf(zip_obj, nombre, padron, corrector, entrega, id_entrega):
   """Arma un PDF con los archivos de una entrega y los datos
-  del alumno. El archivo se llama siempre igual: entrega.pdf
-  en el directorio actual de trabajo, y se debe borrar luego.
-  A cargo del usuario.
+  del alumno. El archivo se denomina según id_entrega, que
+  puede ser, por ejemplo, el hash del commit a GH.
+  Devuelve el nombre del archivo generado. El borrado queda a 
+  cargo del usuario.
   """
   archivo_salida = id_entrega + ".pdf"
   markdown = """
@@ -432,8 +433,6 @@ def send_reply(orig_msg, reply_text, pdf_entrega):
   server.docmd("AUTH", "XOAUTH2 " + xoauth2_b64)
   server.send_message(reply)
   server.close()
-
-  del_pdf(entrega_pdf)
 
 
 def get_oauth_credentials():
