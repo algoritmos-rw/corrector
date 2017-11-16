@@ -370,7 +370,8 @@ def make_pdf(zip_obj, nombre, padron, corrector, entrega, id_entrega):
       continue
 
     with zip_obj.open(archivo) as f:
-        texto = f.read()
+      texto = f.read()
+
     nombre_archivo_solo = archivo.split("/")[-1]
     texto_embebido = """
 ### Archivo: {0}   
@@ -378,13 +379,14 @@ def make_pdf(zip_obj, nombre, padron, corrector, entrega, id_entrega):
 {1}
 ```   
 """.format(nombre_archivo_solo, texto)
-    print(texto_embebido)
-    pypandoc.convert_text(
-      texto_embebido,
-      "pdf",
-      format = "md",
-      outputfile = archivo_salida
-    )
+    markdown += texto_embebido
+
+  pypandoc.convert_text(
+    markdown,
+    "pdf",
+    format = "md",
+    outputfile = archivo_salida
+  )
   return archivo_salida
 
 def del_pdf(archivo_entrega):
