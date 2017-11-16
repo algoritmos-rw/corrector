@@ -161,7 +161,7 @@ def procesar_entrega(msg):
       padron = padron,
       corrector = email_ayudante,
       entrega = tp_id,
-      id_entrega = abs(hash(moss.url())) #id unico (temporario) de la entrega
+      id_entrega = moss.get_hash() #id unico (temporario) de la entrega
     )
 
     send_reply(
@@ -315,6 +315,13 @@ class Moss:
     return subprocess.check_output(
         f'echo "{GITHUB_URL}/tree/$({short_rev})/$({relative_dir})"',
         shell=True, encoding="utf-8", cwd=self._dest)
+
+  def get_hash(self):
+    short_rev = "git show -s --pretty=tformat:%h"
+    return subprocess.check_output(
+      short_rev,
+      shell=True, encoding="utf-8", cwd=self._dest
+    )
 
   def save_data(self, filename, contents):
     """Guarda un archivo si es código fuente.
