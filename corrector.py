@@ -43,6 +43,7 @@ import subprocess
 import sys
 import tarfile
 import zipfile
+import pypandoc
 
 import httplib2
 import oauth2client.client
@@ -149,10 +150,28 @@ def procesar_entrega(msg):
   stdout, _ = worker.communicate()
   output = stdout.decode("utf-8")
   retcode = worker.wait()
-
   if retcode == 0:
-    send_reply(msg, output + "\n\n" +
-               "-- \nURL de esta entrega (para uso docente):\n" + moss.url())
+    # Armamos un pdf con el código de la entrega.
+    email_alumno = msg.get("Cc", "")[0]
+    email_ayudante = msg.get("Cc", ["",""])[1]
+    
+    entrega_pdf = make_pdf(
+      zip_obj = zip_obj,
+      nombre = email_alumno,
+      padron = padron,
+      corrector = email_ayudante,
+      entrega = tp_id,
+      id_entrega = abs(hash(moss.url())) #id unico (temporario) de la entrega
+    )
+
+    send_reply(
+      msg,
+      output + "\n\n -- \n" +
+        "URL de esta entrega (para uso docente):\n" + moss.url(),
+      entrega_pdf
+    )
+
+    del_pdf(entrega_pdf)
   else:
     raise ErrorInterno(output)
 
@@ -323,7 +342,42 @@ def zip_datetime(info):
   return datetime.datetime(*info.date_time)
 
 
-def send_reply(orig_msg, reply_text):
+def make_pdf(zip_obj, nombre, padron, corrector, entrega, id_entrega):
+  """Arma un PDF con los archivos de una entrega y los datos
+  del alumno. El archivo se llama siempre igual: entrega.pdf
+  en el directorio actual de trabajo, y se debe borrar luego.
+  A cargo del usuario.
+  """
+  archivo_salida = id_entrega + ".pdf"
+  markdown = """
+## {0} - Corrector: {1}  
+**Nombre:** {2} **Padron**: {3}  
+""".format(entrega, corrector, nombre, padron)
+
+  for path, zip_info in zip_walk(zip_obj):
+    with zip_obj.open(archivo) as f:
+        texto = f.read()
+    nombre_archivo_solo = archivo.split("/")[-1]
+    texto_embebido = """
+### Archivo: {0}   
+```c
+{1}
+```   
+""".format(nombre_archivo_solo, texto)
+    print(texto_embebido)
+    pypandoc.convert_text(
+      texto_embebido,
+      "pdf",
+      format = "md",
+      outputfile = archivo_salida
+    )
+  return archivo_salida
+
+def del_pdf(archivo_entrega):
+  """Remueve un archivo creado por make_pdf()"""
+  os.remove(archivo_entrega)
+
+def send_reply(orig_msg, reply_text, pdf_entrega):
   """Envía una cadena de texto como respuesta a un correo recibido.
   """
   if not OAUTH_REFRESH_TOKEN:
@@ -347,6 +401,23 @@ def send_reply(orig_msg, reply_text):
   xoauth2_tok = "user=%s\1" "auth=Bearer %s\1\1" % (GMAIL_ACCOUNT,
                                                     creds.access_token)
   xoauth2_b64 = base64.b64encode(xoauth2_tok.encode("ascii")).decode("ascii")
+  
+  # Agregamos el PDF.
+  with open(pdf_entrega, "rb", encoding = 'utf-8') as pdf:
+    contenido_pdf = pdf.read()
+
+  pdf_adj = MIMEApplication(
+    contenido_pdf,
+    _subtype = "pdf",
+    _encoder = base64.b64encode
+  )
+  pdf_adj.add_header(
+    'content-disposition',
+    'attachment',
+    filename = "Entrega.pdf"
+  )
+
+  reply.attach(pdf_adj)
 
   server = smtplib.SMTP("smtp.gmail.com", 587)
   server.ehlo()
@@ -355,6 +426,8 @@ def send_reply(orig_msg, reply_text):
   server.docmd("AUTH", "XOAUTH2 " + xoauth2_b64)
   server.send_message(reply)
   server.close()
+
+  del_pdf(entrega_pdf)
 
 
 def get_oauth_credentials():
