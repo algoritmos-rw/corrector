@@ -355,6 +355,12 @@ def make_pdf(zip_obj, nombre, padron, corrector, entrega, id_entrega):
 """.format(entrega, corrector, nombre, padron)
 
   for path, zip_info in zip_walk(zip_obj):
+    archivo = zip_info.filename
+    extension = archivo[-2:]
+
+    if extension!=".c" and extension!=".h":
+      continue
+
     with zip_obj.open(archivo) as f:
         texto = f.read()
     nombre_archivo_solo = archivo.split("/")[-1]
