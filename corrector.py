@@ -98,7 +98,7 @@ def procesar_entrega(msg):
   _, addr_from = email.utils.parseaddr(msg["From"])
 
   # Ignoramos los mails que no son para el corrector automático.
-  if GMAIL_ACCOUNT not in msg["To"]:
+  if GMAIL_ACCOUNT not in msg["To"] or GMAIL_ACCOUNT not in addr_from:
     sys.stderr.write("Ignorando email de {}\n".format(addr_from))
     return
 
