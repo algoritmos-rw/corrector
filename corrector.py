@@ -319,7 +319,7 @@ class Moss:
     subprocess.call(["git"] + args, cwd=self._dest)
 
   def save_output(self, output):
-  	filepath = self._dest / 'README.md'
+    filepath = self._dest / 'README.md'
     with open(filepath,'w') as f:
       f.write(output.replace('\n', '\n\n'))
     return self._git(["add", filepath]) == 0
