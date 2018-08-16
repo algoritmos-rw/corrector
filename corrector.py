@@ -319,8 +319,11 @@ class Moss:
     subprocess.call(["git"] + args, cwd=self._dest)
 
   def save_output(self, output):
-    with open('README.md','w') as f:
-      f.write(output)
+  	filepath = self._dest / 'README.md'
+    with open(filepath,'w') as f:
+      f.write(output.replace('\n', '\n\n'))
+    return self._git(["add", filepath]) == 0
+
 
 
 def zip_datetime(info):
