@@ -144,13 +144,14 @@ def procesar_entrega(msg):
     moss.save_data(path, zip_obj.read(zip_info))
     tar.addfile(info, zip_obj.open(zip_info.filename))
 
+  tar.close()
+  
   stdout, _ = worker.communicate()
   output = stdout.decode("utf-8")
   retcode = worker.wait()
 
   moss.save_output(output)
   moss.flush()
-  tar.close()
 
   if retcode == 0:
     send_reply(msg, ai_corrector.vida_corrector(tp_id) + output + "\n\n" +
