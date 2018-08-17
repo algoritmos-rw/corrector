@@ -322,7 +322,7 @@ class Moss:
   def save_output(self, output):
     filepath = self._dest / 'README.md'
     with open(filepath,'w') as f:
-      f.write('```'+output+'```')
+      f.write('```\n'+output+'```')
     return self._git(["add", filepath]) == 0
 
 
