@@ -38,7 +38,8 @@ Para que los cambios realizados al worker tomen efecto, se debe actualizar la im
 
   1. Pushear al repo los cambios realizados al worker.
 
-  2. Correr `sudo docker pull algoritmosrw/corrector`.
+  2. Correr `sudo docker pull algoritmosrw/corrector`. Comprobar que se actualizó la imagen en https://hub.docker.com/r/algoritmosrw/corrector/
+
 
 En caso de querer recompilar la imagen manualmente:
 
