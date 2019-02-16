@@ -32,6 +32,8 @@ Es un script en bash (`ojo_bionico.sh`) que invoca el script de [MOSS](https://t
 
     Todos estos parámetros son configurables desde el archivo `corrector.env`.
 
+  4. Situar el repositorio del corrector en la branch `fiuba`.
+
 ## Actualización de imagen de Docker
 
 Para que los cambios realizados al worker tomen efecto, se debe actualizar la imagen local de Docker que utilizamos: 
