@@ -59,6 +59,19 @@ GITHUB_URL = "https://github.com/" + os.environ["CORRECTOR_GH_REPO"]
 REPO_TSV = ROOT_DIR / "conf" / "fiubatp.tsv"
 REPO_DIR = ROOT_DIR / os.environ["CORRECTOR_REPOS"]
 
+# XXX Temporario 2020/1.
+LEGAJOS_PULLREQ = [
+  "102427",
+  "103457",
+  "103740",
+  "103843",
+  "104302",
+  "105051",
+  "105147",
+  "105264",
+  "105296",
+]
+
 MAX_ZIP_SIZE = 1024 * 1024  # 1 MiB
 PADRON_REGEX = re.compile(r"\b(SP\d+|CBC\d+|\d{5,})\b")
 AUSENCIA_REGEX = re.compile(r" \(ausencia\)$")
@@ -178,7 +191,7 @@ def procesar_entrega(msg):
     except Exception as ex:
       print(f"Error al exportar a repositorio individual: {ex}", file=sys.stderr)
 
-    if pullreq_url:
+    if pullreq_url and padron in LEGAJOS_PULLREQ:
       # Insertar la URL de la pull request en el mensaje. Es medio hairy porque
       # hay que insertarlo después del Todo OK. TODO: migrate to Jinja templates.
       pre, post = TODO_OK_REGEX.split(output, 1)
