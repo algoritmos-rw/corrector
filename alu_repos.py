@@ -34,6 +34,21 @@ DEFAULT_GHUSER = os.environ["CORRECTOR_GH_USER"]
 # el enlace al repo en el mail que envía el corrector.
 REVIEWEE_INDIV = {
     "54321",
+    "96948",
+    "101769",
+    "102288",
+    "102427",
+    "103227",
+    "103457",
+    "103740",
+    "103843",
+    "104302",
+    "105051",
+    "105147",
+    "105161",
+    "105264",
+    "105296",
+    "105492",
 }
 
 # Poner aquí los padrones de integrantes de grupos, pero *solo*
