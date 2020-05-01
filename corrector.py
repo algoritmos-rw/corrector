@@ -47,15 +47,22 @@ import zipfile
 import httplib2
 import oauth2client.client
 
+import pull_requests as pullreq
+
 ROOT_DIR = pathlib.Path(os.environ["CORRECTOR_ROOT"])
 SKEL_DIR = ROOT_DIR / os.environ["CORRECTOR_SKEL"]
 DATA_DIR = ROOT_DIR / os.environ["CORRECTOR_TPS"]
 WORKER_BIN = ROOT_DIR / os.environ["CORRECTOR_WORKER"]
 GITHUB_URL = "https://github.com/" + os.environ["CORRECTOR_GH_REPO"]
 
+# Para el sistema de pull requests.
+REPO_TSV = ROOT_DIR / "conf" / "fiubatp.tsv"
+REPO_DIR = ROOT_DIR / os.environ["CORRECTOR_REPOS"]
+
 MAX_ZIP_SIZE = 1024 * 1024  # 1 MiB
 PADRON_REGEX = re.compile(r"\b(SP\d+|CBC\d+|\d{5,})\b")
 AUSENCIA_REGEX = re.compile(r" \(ausencia\)$")
+TODO_OK_REGEX = re.compile(r"^Todo OK$", re.M)
 
 GMAIL_ACCOUNT = os.environ.get("CORRECTOR_ACCOUNT")
 CLIENT_ID = os.environ.get("CORRECTOR_OAUTH_CLIENT")
@@ -161,6 +168,22 @@ def procesar_entrega(msg):
   stdout, _ = worker.communicate()
   output = stdout.decode("utf-8")
   retcode = worker.wait()
+
+  if TODO_OK_REGEX.search(output):
+    # Sincronizar la entrega con los repositorios individuales.
+    pullreq_url = None
+    repodir = REPO_DIR / padron
+    try:
+      pullreq_url = pullreq.update_repo(tp_id, repodir, moss.location(), REPO_TSV)
+    except Exception as ex:
+      print(f"Error al exportar a repositorio individual: {ex}", file=sys.stderr)
+
+    if pullreq_url:
+      # Insertar la URL de la pull request en el mensaje. Es medio hairy porque
+      # hay que insertarlo después del Todo OK. TODO: migrate to Jinja templates.
+      pre, post = TODO_OK_REGEX.split(output, 1)
+      message = "URL para crear pull request de la entrega (consultar docente):"
+      output = f"{pre}Todo OK\n\n{message}\n{pullreq_url}{post}"
 
   moss.save_output(f"{subj}\n\n{output}")
   moss.commit_emoji(output)
@@ -305,6 +328,11 @@ class Moss:
     self._dest.mkdir(parents=True)
     self._date = subj_date  # XXX(dato): verify RFC822
     self._commit_message = f"New {tp_id} upload from {padron}"
+
+  def location(self):
+    """Directorio donde se guardaron los archivos.
+    """
+    return self._dest
 
   def url(self):
     short_rev = "git show -s --pretty=tformat:%h"
