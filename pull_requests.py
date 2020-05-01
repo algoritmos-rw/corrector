@@ -81,12 +81,15 @@ def update_repo(tp_id, repodir, upstream, planilla_tsv, fetch=True, silent=True)
     if not alu_dict.get("Github"):
         print(f"no se pudo encontrar cuenta de Github para {legajo}")
         return
-    elif not repodir.exists() and not alu_dict.get("Repo"):
+    elif not (repo := alu_dict.get("Repo")):
         print(f"no se pudo encontrar repo URL para {legajo}")
         return
-
-    if not repodir.exists():
-        git.Repo.clone_from("git@github.com:" + alu_dict["Repo"], repodir)
+    elif not repodir.exists():
+        try:
+            git.Repo.clone_from(f"git@github.com:{repo}", repodir)
+        except git.exc.GitCommandError as ex:
+            print(f"no se pudo clonar {repo}: {ex}")
+            return
 
     try:
         repo = git.Repo(repodir)
