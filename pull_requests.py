@@ -45,7 +45,7 @@ PULLREQ_URL = "https://github.com/{repo}/compare/master...{branch}?quick_pull=1"
 
 ## Función principal para corrector.py
 ##
-def update_repo(tp_id, repodir, upstream, planilla_tsv, silent=True):
+def update_repo(tp_id, repodir, upstream, planilla_tsv, fetch=True, silent=True):
     """Importa la última versión de una entrega a un repositorio individual.
 
     Args:
@@ -91,7 +91,8 @@ def update_repo(tp_id, repodir, upstream, planilla_tsv, silent=True):
     try:
         repo = git.Repo(repodir)
         origin = repo.remotes["origin"]
-        origin.fetch()
+        if fetch:
+            origin.fetch()
     except (git.exc.InvalidGitRepositoryError, git.exc.GitCommandError) as ex:
         print(f"could not open/fetch {repodir!r}: {ex}", file=sys.stderr)
         return
@@ -167,6 +168,7 @@ def parse_args():
         help="ruta a un checkout de algoritmos-rw/algo2_entregas",
     )
     parser.add_argument("--pull-entregas", action="store_true")
+    parser.add_argument("--no-fetch", dest="fetch", default=True, action="store_false")
     return parser.parse_args()
 
 
@@ -249,7 +251,7 @@ def update_branch(branch, subdir, upstream, ghuser):
     upstream_repo = git.Repo(upstream, search_parent_directories=True)
     upstream_relpath = upstream.relative_to(upstream_repo.working_dir).as_posix()
 
-    print(f"Processing {repo.working_dir}...", end=" ")
+    print(f"Processing {repo.working_dir} ...", end=" ")
 
     for commit in upstream_repo.iter_commits(paths=[upstream_relpath]):
         if commit.authored_date > newest_in_repo:  # XXX Not robust enough.
