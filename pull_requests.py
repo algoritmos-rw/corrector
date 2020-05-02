@@ -59,6 +59,11 @@ def update_repo(tp_id, repodir, upstream, planilla_tsv, silent=True):
     """
     legajo = repodir.name  # Siempre cumplimos que `basename $REPO` == legajo.
     alu_dict = None
+    try:
+        upstream = upstream.resolve(strict=True)
+    except FileNotFoundError as ex:
+        print(f"no such upstream: {upstream}")
+        return
 
     # Buscar legajo en la "planilla".
     with open(planilla_tsv, newline="") as fileobj:
@@ -339,13 +344,7 @@ def main():
     for legajo in args.legajos:
         alurepo = repodir / legajo
         upstream = entregas_repo / args.tp / args.cuatri / legajo
-        if upstream.exists():
-            update_repo(args.tp, alurepo, upstream, args.planilla)
-        else:
-            print(
-                f"no hay entrega para {upstream.relative_to(entregas_repo)}",
-                file=sys.stderr,
-            )
+        update_repo(args.tp, alurepo, upstream, args.planilla, fetch=args.fetch)
 
 
 if __name__ == "__main__":
