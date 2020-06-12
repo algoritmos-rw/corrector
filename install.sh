@@ -19,7 +19,7 @@ source "conf/corrector.env"
 env DEBIAN_FRONTEND=noninteractive            \
 apt-get install --yes --no-install-recommends \
     gcc libc6-dev fetchmail ca-certificates   \
-    python3 python3-git python3-oauth2client
+    python3 python3-git python3-oauth2client python3-github
 
 ##
 
