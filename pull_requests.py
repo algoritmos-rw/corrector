@@ -96,7 +96,7 @@ def main():
         if not upstream.exists():
             continue
         try:
-            alu_repo = AluRepo.from_legajo(legajo)
+            alu_repo = AluRepo.from_legajos([legajo], args.tp)
             alu_repo.ensure_exists(skel_repo="algorw-alu/algo2_tps")
             alu_repo.sync(upstream, args.tp)
         except (KeyError, ValueError, github.GithubException) as ex:
