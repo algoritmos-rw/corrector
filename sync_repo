@@ -1,10 +1,10 @@
 #!/usr/bin/python3
 
-"""Script para sincronizar las entregas con repositorios individuales.
+"""Script para sincronizar manualmente los repositorios individuales.
 
-Uso como script:
+Uso:
 
-  $ ./pull_requests.py --tp <TP_ID> <legajo>...
+  $ ./sync_repo --tp <TP_ID> <legajo>...
 
 donde TP_ID es el TP a sincronizar ("tp0", "vector", etc.). La ubicación
 del repositorio algoritmos-rw/algo2_entregas se puede especificar con la
@@ -107,6 +107,7 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
+
 
 # Local Variables:
 # eval: (blacken-mode 1)
