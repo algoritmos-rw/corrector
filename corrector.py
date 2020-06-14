@@ -172,7 +172,7 @@ def procesar_entrega(msg):
   if TODO_OK_REGEX.search(output):
     try:
       # Sincronizar la entrega con los repositorios individuales.
-      alu_repo = AluRepo()
+      alu_repo = AluRepo.from_legajos(padron.split("_"), tp_id)
       alu_repo.ensure_exists(skel_repo="algorw-alu/algo2_tps")
       alu_repo.sync(moss.location(), tp_id)
     except (KeyError, ValueError):
