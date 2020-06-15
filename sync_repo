@@ -1,0 +1,114 @@
+#!/usr/bin/python3
+
+"""Script para sincronizar manualmente los repositorios individuales.
+
+Uso:
+
+  $ ./sync_repo --tp <TP_ID> <legajo>...
+
+donde TP_ID es el TP a sincronizar ("tp0", "vector", etc.). La ubicación
+del repositorio algoritmos-rw/algo2_entregas se puede especificar con la
+opción --entregas-repo. repos.tsv debe estar presente en el directorio
+actual, o especificarse con --planilla.
+"""
+
+import argparse
+import os
+import pathlib
+import sys
+
+import git
+import github
+
+try:
+    from dotenv import load_dotenv
+except ImportError:
+    pass
+else:
+    load_dotenv()  # Debe hacerse antes del import de AluRepo.
+
+from alu_repos import AluRepo
+
+
+# Defaults si no se ajustan por la línea de comandos.
+ENTREGAS_REPO = os.path.expanduser("~/fiuba/tprepo")
+CUATRIMESTRE = "2020_1"
+
+
+def parse_args():
+    """Parse command line options and arguments.
+    """
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "legajos",
+        metavar="legajo",
+        nargs="+",
+        help="repositorio nombrado con el legajo asociado",
+    )
+    parser.add_argument(
+        "--tp",
+        metavar="TP_ID",
+        required=True,
+        help="identificador del TP (dobla como nombre de rama)",
+    )
+    parser.add_argument(
+        "--cuatri",
+        metavar="YYYY_N",
+        default=CUATRIMESTRE,
+        help="cuatrimestre para el que buscar entregas en el repo",
+    )
+    parser.add_argument(
+        "--planilla",
+        metavar="TSV_FILE",
+        default="repos.tsv",
+        help="archivo TSV con los contenidos de la hoja 'Repos'",
+    )
+    parser.add_argument(
+        "--entregas-repo",
+        metavar="PATH",
+        default=ENTREGAS_REPO,
+        help="ruta a un checkout de algoritmos-rw/algo2_entregas",
+    )
+    parser.add_argument("--pull-entregas", action="store_true")
+    parser.add_argument("--debug", action="store_true", default=True)
+    return parser.parse_args()
+
+
+def main():
+    """Función principal del script (no invocada si se importa como módulo).
+    """
+    args = parse_args()
+    entregas_repo = pathlib.Path(args.entregas_repo)
+
+    try:
+        tprepo = git.Repo(args.entregas_repo)
+    except git.exc.InvalidGitRepositoryError as ex:
+        print(f"could not open entregas_repo: {ex}", file=sys.stderr)
+        return 1
+
+    if args.pull_entregas:
+        print(f"Pulling from {args.entregas_repo}")
+        remote = tprepo.remote()
+        remote.pull()
+
+    for legajo in args.legajos:
+        upstream = entregas_repo / args.tp / args.cuatri / legajo
+        if not upstream.exists():
+            continue
+        try:
+            alu_repo = AluRepo.from_legajos([legajo], args.tp)
+            alu_repo.ensure_exists(skel_repo="algorw-alu/algo2_tps")
+            alu_repo.sync(upstream, args.tp)
+        except (KeyError, ValueError, github.GithubException) as ex:
+            print(f"error al procesar {legajo}: {ex}")
+            if args.debug:
+                raise ex from ex
+
+
+if __name__ == "__main__":
+    sys.exit(main())
+
+
+# Local Variables:
+# eval: (blacken-mode 1)
+# End:
