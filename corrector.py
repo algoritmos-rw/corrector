@@ -169,7 +169,9 @@ def procesar_entrega(msg):
   if retcode != 0:
     raise ErrorInterno(output)
 
-  if TODO_OK_REGEX.search(output):
+  # Este código corre ahora desde el corrector.py del sistema de entregas.
+  # No lo borramos por si acaso hubiera que hacer un revert de emergencia.
+  if TODO_OK_REGEX.search(output) and False:
     try:
       # Sincronizar la entrega con los repositorios individuales.
       alu_repo = AluRepo.from_legajos(padron.split("_"), tp_id)
