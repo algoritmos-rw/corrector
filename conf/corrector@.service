@@ -4,6 +4,7 @@ After=docker.service
 
 [Service]
 User=%i
+Environment=LANG=C.UTF-8
 Environment=CORRECTOR_ROOT=/home/%i/corrector
 EnvironmentFile=/home/%i/corrector/conf/corrector.env
 ExecStart=/usr/bin/fetchmail --daemon 180 --nodetach \

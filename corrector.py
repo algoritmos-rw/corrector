@@ -173,7 +173,9 @@ def procesar_entrega(msg):
   if retcode != 0:
     raise ErrorInterno(output)
 
-  if TODO_OK_REGEX.search(output):
+  # Este código corre ahora desde el corrector.py del sistema de entregas.
+  # No lo borramos por si acaso hubiera que hacer un revert de emergencia.
+  if TODO_OK_REGEX.search(output) and False:
     try:
       # Sincronizar la entrega con los repositorios individuales.
       alu_repo = AluRepo.from_legajos(padron.split("_"), tp_id)
@@ -397,11 +399,9 @@ def send_reply(orig_msg, reply_text):
   reply = email.message.Message(email.policy.default)
   reply.set_payload(reply_text, "utf-8")
 
-  reply["From"] = GMAIL_ACCOUNT
-  reply["To"] = orig_msg["To"]
-  reply["Cc"] = orig_msg.get("Cc", "")
+  reply["From"] = "Corrector legacy <{}>".format(GMAIL_ACCOUNT)
+  reply["To"] = GMAIL_ACCOUNT
   reply["Subject"] = "Re: " + orig_msg["Subject"]
-  reply["Reply-To"] = orig_msg.get("Reply-To", "")
   reply["In-Reply-To"] = orig_msg["Message-ID"]
 
   creds = get_oauth_credentials()
