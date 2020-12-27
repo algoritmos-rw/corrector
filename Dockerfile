@@ -1,4 +1,4 @@
-FROM ubuntu:focal
+FROM swift:focal
 
 ADD packages.txt /tmp
 ENV DEBIAN_FRONTEND noninteractive
