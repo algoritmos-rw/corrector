@@ -26,3 +26,4 @@ unzip
 dos2unix
 clang-format
 python3-yaml
+python3-jinja2
