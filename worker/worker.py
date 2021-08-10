@@ -26,6 +26,8 @@ import subprocess
 import sys
 import tarfile
 import tempfile
+import traceback
+import sys
 
 from java import CorregirJava
 
@@ -103,15 +105,17 @@ def ejecutar(corrector, timeout):
     with tarfile.open(fileobj=sys.stdin.buffer, mode="r|") as tar:
       tar.extractall(tmpdir)
 
-    signal.alarm(int(timeout * 1.5))
+    signal.alarm(timeout + 5)
     try:
       corrector(tmpdir).run(timeout)
     except Timeout:
       # Cada corrector debería comprobar el tiempo, pero este es un error
       # genérico de última instancia.
-      raise ErrorAlumno("El proceso tardó más de {} segundos".format(timeout))
+      raise ErrorAlumno(f"El proceso tardó más de {timeout + 5} segundos")
     finally:
-      signal.alarm(0)
+      # Añadir un segundo timeout para asegurar que ningún código restante
+      # de ejecutar() —por ejemplo, tmpdir.cleanup()— pueda colgar al worker.
+      signal.alarm(timeout // 2)
 
 
 def main():
@@ -128,6 +132,11 @@ def main():
     ejecutar(CORRECTORES[args.corrector], args.timeout)
   except ErrorAlumno as ex:
     print("ERROR: {}.".format(ex))
+  except Timeout as ex:
+    print("\n" "Aviso: se realizó la corrección, pero el "
+          "sistema demoró en retornar la respuesta:\n")
+    traceback.print_tb(ex.__traceback__, file=sys.stdout)
+
 
 ##
 
