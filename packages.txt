@@ -11,6 +11,7 @@ libgtest-dev
 lua5.3
 nodejs
 python3
+golang
 openjdk-11-jdk-headless
 
 # Orga
