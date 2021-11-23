@@ -23,3 +23,5 @@ El antiguo `corrector.py` fue [integrado][i1] en [el sistema de entregas][algo2_
 	cd /srv/algo2/corrector/repo/worker
 	sudo docker build -t algoritmosrw/corrector .
 	```
+
+Eventualmente no será más necesario el último comando, y en vez de `:v3` será a latest, pero por ahora se mantiene así. 
