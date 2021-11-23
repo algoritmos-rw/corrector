@@ -7,6 +7,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update && grep '^[^ #]' /tmp/packages.txt        | \
         xargs apt-get install --yes --no-install-recommends && \
+        grep '^[^ #]' goimports.txt | xargs go get && \
         rm -rf /var/lib/apt/lists/* /tmp/packages.txt
 
 # TODO: cambiar a $INPUT_PATH antes de correr $INPUT_COMMAND.
