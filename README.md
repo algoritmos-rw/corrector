@@ -8,3 +8,18 @@ El antiguo `corrector.py` fue [integrado][i1] en [el sistema de entregas][algo2_
 [algo2_entregas]: https://github.com/algoritmos-rw/algo2_sistema_entregas
 [i1]: https://github.com/algoritmos-rw/algo2_sistema_entregas/commit/6eb674b46e
 [i2]: https://github.com/dato/sisyphus/commit/0703e9cf22b6142330d1b415a1b06796f
+
+### Pasos para agregar un lenguaje: 
+
+* Actualizar `packages.txt`
+* Revisar el `Dockerfile` en caso de necesitarse algo extra (i.e. librerías)
+* Mandar PR contra esta rama (`v3`)
+* [Esperar a que termine de buildearse la imagen](https://github.com/algoritmos-rw/corrector/actions)
+* Mergear PR y esperar a que buildee nuevamente. 
+* Ingresar en el server del corrector y ejecutar: 
+
+	```
+	sudo docker pull algoritmosrw/corrector:v3
+	cd /srv/algo2/corrector/repo/worker
+	sudo docker build -t algoritmosrw/corrector .
+	```
