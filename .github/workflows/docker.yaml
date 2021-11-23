@@ -7,7 +7,7 @@ on:
       - .github/workflows/docker.yaml
     branches: [v3, go]
   pull_request:
-    branches: [v3, go]
+    branches: [v3]
 jobs:
   docker:
     name: Imagen Docker del worker
