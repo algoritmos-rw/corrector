@@ -11,17 +11,21 @@ El antiguo `corrector.py` fue [integrado][i1] en [el sistema de entregas][algo2_
 
 ### Pasos para agregar un lenguaje: 
 
+* Branchear desde `v3`
 * Actualizar `packages.txt`
 * Revisar el `Dockerfile` en caso de necesitarse algo extra (i.e. librerías)
-* Mandar PR contra esta rama (`v3`)
+* Agregar en el archivo `docker.yaml` que se arme la imagen por los push al branch de desarrollo
+* Pushear el branch de desarrollo. 
 * [Esperar a que termine de buildearse la imagen](https://github.com/algoritmos-rw/corrector/actions)
-* Mergear PR y esperar a que buildee nuevamente. 
 * Ingresar en el server del corrector y ejecutar: 
 
 	```
-	sudo docker pull algoritmosrw/corrector:v3
+	sudo docker pull algoritmosrw/corrector:RAMA
 	cd /srv/algo2/corrector/repo/worker
 	sudo docker build -t algoritmosrw/corrector .
 	```
+* Probar lo que sea necesario
+* Mandar PR contra esta rama (`v3`)
+* Mergear PR y esperar a que buildee nuevamente. Volver a entrar y hacer lo mismo de antes pero en vez de `RAMA` hacerlo contra `v3`. 
 
 Eventualmente no será más necesario el último comando, y en vez de `:v3` será a latest, pero por ahora se mantiene así. 
