@@ -1,2 +1,2 @@
-github.com/stretchr/testify
-github.com/stretchr/testify/require
+github.com/stretchr/testify@v1.7.0
+github.com/stretchr/testify/require@v1.7.0
