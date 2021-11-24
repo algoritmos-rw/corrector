@@ -8,6 +8,7 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV XDG_CACHE_HOME=/tmp/.cache
 ENV GO111MODULE=off
 
+
 RUN apt-get update && grep '^[^ #]' /tmp/packages.txt        | \
         xargs apt-get install --yes --no-install-recommends && \
         grep '^[^ #]' /tmp/goimports.txt | xargs go get && \
