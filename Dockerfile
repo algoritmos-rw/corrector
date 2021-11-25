@@ -6,8 +6,9 @@ ADD nodejs.list /etc/apt/sources.list.d
 ADD nodesource.gpg.asc /etc/apt/trusted.gpg.d
 ENV DEBIAN_FRONTEND noninteractive
 ENV XDG_CACHE_HOME=/tmp/.cache
-ENV GO111MODULE=off
 
+ENV GOPATH /go
+ENV PATH $GOPATH/bin:$PATH
 
 RUN apt-get update && grep '^[^ #]' /tmp/packages.txt        | \
         xargs apt-get install --yes --no-install-recommends && \
