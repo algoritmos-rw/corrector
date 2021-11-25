@@ -21,7 +21,5 @@ ENV PATH $GOPATH/bin:$GOROOT/bin:$PATH
 RUN grep '^[^ #]' /tmp/goimports.txt | xargs go install && rm -rf /tmp/goimports.txt
 
 
-
-
 # TODO: cambiar a $INPUT_PATH antes de correr $INPUT_COMMAND.
 ENTRYPOINT ["/bin/sh", "-c"]
