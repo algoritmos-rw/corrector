@@ -14,7 +14,7 @@ El antiguo `corrector.py` fue [integrado][i1] en [el sistema de entregas][algo2_
 * Branchear desde `v3`
 * Actualizar `packages.txt`
 * Revisar el `Dockerfile` en caso de necesitarse algo extra (i.e. librerías)
-* Agregar en el archivo `docker.yaml` que se arme la imagen por los push al branch de desarrollo
+* Agregar en el archivo `docker.yaml` que se arme la imagen por los push al branch de desarrollo (en `push`)
 * Pushear el branch de desarrollo. 
 * [Esperar a que termine de buildearse la imagen](https://github.com/algoritmos-rw/corrector/actions)
 * Ingresar en el server del corrector y ejecutar: 
@@ -24,7 +24,8 @@ El antiguo `corrector.py` fue [integrado][i1] en [el sistema de entregas][algo2_
 	cd /srv/algo2/corrector/repo/worker
 	sudo docker build -t algoritmosrw/corrector .
 	```
-* Probar lo que sea necesario
+* Probar lo que sea necesario en turing
+* Eliminar lo agregado en `docker.yaml`. 
 * Mandar PR contra esta rama (`v3`)
 * Mergear PR y esperar a que buildee nuevamente. Volver a entrar y hacer lo mismo de antes pero en vez de `RAMA` hacerlo contra `v3`. 
 
