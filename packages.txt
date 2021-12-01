@@ -11,7 +11,7 @@ libgtest-dev
 lua5.3
 nodejs
 python3
-golang
+# golang
 openjdk-11-jdk-headless
 
 # Orga
@@ -28,3 +28,4 @@ dos2unix
 clang-format
 python3-yaml
 python3-jinja2
+wget
