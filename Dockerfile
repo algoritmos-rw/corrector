@@ -2,7 +2,7 @@ FROM ubuntu:focal
 
 ADD packages.txt /tmp
 ADD goimports.txt /tmp
-ADD go.mod /tmp
+ADD go.mod /
 ADD nodejs.list /etc/apt/sources.list.d
 ADD nodesource.gpg.asc /etc/apt/trusted.gpg.d
 ENV DEBIAN_FRONTEND noninteractive
@@ -19,7 +19,7 @@ ENV GOROOT /usr/lib/go
 ENV GOPATH /go
 ENV PATH $GOPATH/bin:$GOROOT/bin:$PATH
 
-RUN cd /tmp && grep '^[^ #]' /tmp/goimports.txt | xargs go get && rm -rf /tmp/goimports.txt && rm -rf /tmp/go.mod
+RUN grep '^[^ #]' /tmp/goimports.txt | xargs go get && rm -rf /tmp/goimports.txt && rm -rf /go.mod
 
 
 # TODO: cambiar a $INPUT_PATH antes de correr $INPUT_COMMAND.
