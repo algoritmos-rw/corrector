@@ -12,8 +12,8 @@ RUN apt-get update && grep '^[^ #]' /tmp/packages.txt        | \
         xargs apt-get install --yes --no-install-recommends && \
         rm -rf /var/lib/apt/lists/* /tmp/packages.txt
 
-RUN wget https://go.dev/dl/go1.19.3.linux-amd64.tar.gz
-RUN tar -xvf go1.19.3.linux-amd64.tar.gz
+RUN wget https://go.dev/dl/go1.18.linux-amd64.tar.gz
+RUN tar -xvf go1.18.linux-amd64.tar.gz
 RUN mv go /usr/lib
 ENV GOROOT /usr/lib/go
 ENV GOPATH /go
