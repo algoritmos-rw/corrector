@@ -5,7 +5,7 @@ on:
       - Dockerfile
       - packages.txt
       - .github/workflows/docker.yaml
-    branches: [v3]
+    branches: [v3, test]
   pull_request:
     branches: [v3]
 jobs:
