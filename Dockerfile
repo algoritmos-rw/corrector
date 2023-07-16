@@ -20,7 +20,7 @@ ENV GOPATH /go
 ENV PATH $GOPATH/bin:$GOROOT/bin:$PATH
 
 RUN grep '^[^ #]' /tmp/goimports.txt | xargs go get && rm -rf /tmp/goimports.txt
-RUN go mod tidy && rm -rf /go.mod
+RUN mkdir /dwnlds && mv /go.mod /dwnlds && cd /dwnlds && go mod tidy && cd / && rm -rf /dwnlds
 
 # TODO: cambiar a $INPUT_PATH antes de correr $INPUT_COMMAND.
 ENTRYPOINT ["/bin/sh", "-c"]
