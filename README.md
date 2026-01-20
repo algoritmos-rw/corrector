@@ -21,7 +21,7 @@ El antiguo `corrector.py` fue [integrado][i1] en [el sistema de entregas][algo2_
 
 	```
 	sudo docker pull algoritmosrw/corrector:RAMA
-	cd /srv/algo2/corrector/repo/worker
+	cd /srv/algo2/corrector/repos/corrector/worker
 	sudo docker build -t algoritmosrw/corrector .
 	```
 * Probar lo que sea necesario en turing
